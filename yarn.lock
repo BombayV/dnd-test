@@ -717,6 +717,11 @@ vite@^2.9.9:
   optionalDependencies:
     fsevents "~2.3.2"
 
+vue-dndrop@^1.2.7:
+  version "1.2.7"
+  resolved "https://registry.yarnpkg.com/vue-dndrop/-/vue-dndrop-1.2.7.tgz#76d9b3e7c254b2afaf53194e496348f0d082fff2"
+  integrity sha512-ihc6T9HiUdR02VJ1toQdg+a7zchnZ84nxHXF/1+bUL6LQmbvK+KHlPOWomfoUSaYHdPwu3umrCKS78rkU0WSYw==
+
 vue@^3.2.25:
   version "3.2.36"
   resolved "https://registry.yarnpkg.com/vue/-/vue-3.2.36.tgz#8daa996e2ced521708de97d066c7c998e8bc3378"
