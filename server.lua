@@ -14,8 +14,10 @@ RegisterCommand('customradio', function(source)
 
 end)
 
-AddEventHandler('onServerResourceStart', function(resource)
+AddEventHandler('onResourceStart', function(resource)
 	if resource == GetCurrentResourceName() then
+		print('test')
+		Wait(1500)
 		TriggerClientEvent('create_radios', -1, radios)
 	end
 end)

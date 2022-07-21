@@ -1,9 +1,9 @@
 <script setup>
 import {onMounted, onUnmounted, ref} from 'vue';
-const freqs = ref([
-  { freq: 210, access: ['police'] }
-]);
-const items = ref([])
+const freqs = ref([]);
+const items = ref([
+  {id: 1, title: 'b', frequency: 250}
+])
 
 const fetchNui = async (cbName, data) => {
 	const options = {
@@ -19,14 +19,24 @@ const fetchNui = async (cbName, data) => {
 };
 
 const getFrequency = (freq) => items.value.filter((item) => item.frequency === freq)
-const addItem = (freq) => {
-	fetchNui('join_on_click', { frequency: freq }).then((data) => {
-		if (data.allowed) {
-			items.value.push(data);
-		} else {
-			console.log('Cannot join this frequency');
-		}
-	});
+const addItem = async (freq) => {
+	const resp = await fetchNui('join_on_click', { frequency: freq })
+  if (resp.allowed) {
+    // Check if the item with the id is already in the list
+    const item = items.value.find((item) => item.id === resp.id)
+    if (item) {
+      item.frequency = freq.freq
+    } else {
+      items.value.push({
+        frequency: resp.frequency,
+        id: resp.id,
+        title: resp.title,
+      });
+    }
+
+    console.log(JSON.stringify(resp))
+    console.log(JSON.stringify(items.value))
+  }
 };
 
 const startDrag = (e, item) => {
@@ -45,7 +55,7 @@ const handleMessage = e => {
 	if (e.data.action === 'create_radios') {
 		const { frequencies } = e.data
 		for (const freq of frequencies) {
-			freqs.value.push(freq.freq)
+			freqs.value.push(freq)
 		}
 	}
 }
@@ -61,10 +71,10 @@ onUnmounted(() => window.removeEventListener('message', handleMessage))
 			<div v-for="freq in freqs" class="bg-neutral-600 w-5/6 rounded-lg mt-2 flex flex-col justify-start items-center">
 				<h2 class="font-light text-neutral-200 mt-1.5 w-3/4 text-center border-b">Frequency #{{freq.freq}}</h2>
 				<button @click="addItem(freq)" @drop="onDrop($event, freq)" @dragenter.prevent @dragover.prevent class="w-full h-full flex flex-col items-center justify-start mt-2 mb-2">
-					<div class="bg-neutral-700 w-5/6 text-center font-medium text-neutral-200 text-sm mt-1 mb-1 rounded pt-1 pb-1" v-for="item in getFrequency(freq)" :key="item.id" draggable="true" @dragstart="startDrag($event, item)">
+					<div class="bg-neutral-700 w-5/6 text-center font-medium text-neutral-200 text-sm mt-1 mb-1 rounded pt-1 pb-1" v-for="item in getFrequency(freq.freq)" :key="item.id" :draggable="true" :force-fallback="true" @dragstart="startDrag($event, item)">
 						{{ item.title }}
 					</div>
-					<span v-if="getFrequency(freq).length === 0" class="text-neutral-400 font-medium text-center">No one on this frequency.</span>
+					<span v-if="getFrequency(freq.freq).length === 0" class="text-neutral-400 font-medium text-center">No one on this frequency.</span>
 				</button>
 			</div>
 		</div>
@@ -87,5 +97,6 @@ onUnmounted(() => window.removeEventListener('message', handleMessage))
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 	height: 100vh;
+  user-select: none;
 }
 </style>
