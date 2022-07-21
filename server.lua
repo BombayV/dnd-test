@@ -7,14 +7,11 @@ local radios = {
 
 RegisterNetEvent('sync_radio', function(radioData, status)
 	local playerId <const> = source
-	local xPlayer = ESX.GetPlayerFromId(playerId)
+
 end)
 
 RegisterCommand('customradio', function(source)
-	local xPlayer = ESX.GetPlayerFromId(source)
-	if xPlayer.job.name == 'police' then
-		TriggerClientEvent('customradio', source)
-	end
+
 end)
 
 AddEventHandler('onServerResourceStart', function(resource)
